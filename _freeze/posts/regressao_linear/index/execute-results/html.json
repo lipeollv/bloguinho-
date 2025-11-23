@@ -1,0 +1,12 @@
+{
+  "hash": "68df342d92f6956a5b700143b91f703a",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Regressão Linear\"\nauthor: \"Filipe Cavalcanti\"\ndate: \"2025-11-20\"\ncategories: [math, python]\njupyter: python3\n---\n\nRegressão Linear \n\nComo desenvolver uma função em python para calcular uma regressão linear.\n\n\nBibliotecas\n\n::: {#b6de9ea4 .cell execution_count=1}\n``` {.python .cell-code}\nimport numpy as np\nfrom plotnine import (\n    ggplot, aes, geom_point, geom_abline, ggsave\n)\nimport pandas as pd\nimport os\n\nprint(\"Caminho atual:\", os.getcwd())\nprint(\"Arquivos encontrados:\", os.listdir())\n\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nCaminho atual: /workspaces/bloguinho/posts/regressao_linear\nArquivos encontrados: ['y.txt', 'index.quarto_ipynb', 'index.qmd', 'X.txt', 'thumbnail.jpg', 'grafico.png']\n```\n:::\n:::\n\n\nLeitura dos dados\n\n::: {#3a01a6ad .cell execution_count=2}\n``` {.python .cell-code}\nX = np.loadtxt(\"X.txt\")   # anos de estudo\ny = np.loadtxt(\"y.txt\")   # salário\n```\n:::\n\n\nConstruir a matriz X com 1s\n\n::: {#44202fe8 .cell execution_count=3}\n``` {.python .cell-code}\nn = len(X)\nXmat = np.column_stack((np.ones(n), X))\n```\n:::\n\n\nFórmula matricial (X^T X)^(-1) X^T y\n\n::: {#43c2162c .cell execution_count=4}\n``` {.python .cell-code}\nbeta = np.linalg.inv(Xmat.T @ Xmat) @ (Xmat.T @ y)\n\na = beta[0]  # intercepto\nb = beta[1]  # inclinação\n\nprint(\"Intercepto (a):\", a)\nprint(\"Inclinação (b):\", b)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nIntercepto (a): 373.93446839132355\nInclinação (b): 991.6278332981952\n```\n:::\n:::\n\n\nCriar o gráfico com plotnine\n\n::: {#dbdb586a .cell execution_count=5}\n``` {.python .cell-code}\ndf = {\"x\": X, \"y\": y}\n\nplot = (\n    ggplot(pd.DataFrame(df), aes(\"x\", \"y\"))\n    + geom_point()\n    + geom_abline(intercept=a, slope=b)\n)\n\nplot.save(\"grafico.png\")\n\nfrom IPython.display import Image\nImage(filename=\"grafico.png\")\n\n```\n\n::: {.cell-output .cell-output-stderr}\n```\n/home/codespace/.python/current/lib/python3.12/site-packages/plotnine/ggplot.py:623: PlotnineWarning: Saving 7.0 x 5.0 in image.\n/home/codespace/.python/current/lib/python3.12/site-packages/plotnine/ggplot.py:624: PlotnineWarning: Filename: grafico.png\n```\n:::\n\n::: {.cell-output .cell-output-display execution_count=5}\n![](index_files/figure-html/cell-6-output-2.png){}\n:::\n:::\n\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

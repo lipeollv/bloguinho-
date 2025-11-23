@@ -1,0 +1,74 @@
+---
+title: "Regressão Linear"
+author: "Filipe Cavalcanti"
+date: "2025-11-20"
+categories: [math, python]
+jupyter: python3
+---
+
+Regressão Linear 
+
+Como desenvolver uma função em python para calcular uma regressão linear.
+
+
+Bibliotecas
+```{python}
+import numpy as np
+from plotnine import (
+    ggplot, aes, geom_point, geom_abline, ggsave
+)
+import pandas as pd
+import os
+
+print("Caminho atual:", os.getcwd())
+print("Arquivos encontrados:", os.listdir())
+
+
+```
+
+Leitura dos dados
+
+```{python}
+X = np.loadtxt("X.txt")   # anos de estudo
+y = np.loadtxt("y.txt")   # salário
+```
+
+Construir a matriz X com 1s
+
+```{python}
+n = len(X)
+Xmat = np.column_stack((np.ones(n), X))
+```
+
+Fórmula matricial (X^T X)^(-1) X^T y
+
+```{python}
+beta = np.linalg.inv(Xmat.T @ Xmat) @ (Xmat.T @ y)
+
+a = beta[0]  # intercepto
+b = beta[1]  # inclinação
+
+print("Intercepto (a):", a)
+print("Inclinação (b):", b)
+```
+
+Criar o gráfico com plotnine
+
+```{python}
+df = {"x": X, "y": y}
+
+plot = (
+    ggplot(pd.DataFrame(df), aes("x", "y"))
+    + geom_point()
+    + geom_abline(intercept=a, slope=b)
+)
+
+plot.save("grafico.png")
+
+from IPython.display import Image
+Image(filename="grafico.png")
+
+
+```
+
+

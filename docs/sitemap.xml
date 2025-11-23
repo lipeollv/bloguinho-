@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://your-website-url.example.com/posts/cotação_dolar/index.html</loc>
+    <lastmod>2025-11-23T21:24:13.876Z</lastmod>
+  </url>
+  <url>
+    <loc>https://your-website-url.example.com/posts/regressao_linear/index.html</loc>
+    <lastmod>2025-11-23T22:53:13.148Z</lastmod>
+  </url>
+  <url>
+    <loc>https://your-website-url.example.com/about.html</loc>
+    <lastmod>2025-11-23T17:51:47.834Z</lastmod>
+  </url>
+  <url>
+    <loc>https://your-website-url.example.com/index.html</loc>
+    <lastmod>2025-11-23T17:51:47.830Z</lastmod>
+  </url>
+  <url>
+    <loc>https://your-website-url.example.com/posts/frota_de_onibus/index.html</loc>
+    <lastmod>2025-11-23T22:13:44.889Z</lastmod>
+  </url>
+</urlset>

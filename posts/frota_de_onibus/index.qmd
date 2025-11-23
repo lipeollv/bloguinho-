@@ -1,0 +1,122 @@
+---
+title: "Frota de Ônibus"
+author: "Filipe Cavalcanti"
+date: "2025-11-20"
+categories: [news, python, trasport]
+image: "onibus.jpeg"
+jupyter: python3
+---
+
+Monitoramento de frota de ônibus 
+
+Primeira precisamos criar um arquivo .env para conseguir **colocar o TOKEN da API OLHO VIVO** do sptrans.
+
+Login na API
+```{python}
+import os
+import requests
+from dotenv import load_dotenv
+import folium
+
+# carregar token do arquivo .env
+load_dotenv(".env")
+
+s = requests.Session()
+
+# autenticar no sistema
+res = s.post(
+    f"http://api.olhovivo.sptrans.com.br/v2.1/Login/Autenticar?token={os.getenv('SPTRANS_TOKEN')}"
+)
+
+print("Autenticação:", res.text)
+```
+
+
+Você escolhe sua linha
+```{python}
+linha = "875A"  # troque para a linha que você quer
+```
+
+
+Busca os dados da linha
+```{python}
+# buscar a linha e pegar o código interno
+linha = "875A"
+
+res_linha = s.get(
+    f"http://api.olhovivo.sptrans.com.br/v2.1/Linha/Buscar?termosBusca={linha}"
+).json()
+
+if not res_linha:
+    raise Exception("Linha não encontrada.")
+
+# pegar somente o sentido IDA
+linha_ida = next(item for item in res_linha if item["sl"] == 1)
+
+codigo_linha = linha_ida["cl"]
+print("Código interno:", codigo_linha)
+
+```
+
+
+Agora busca as paradas dessa linha
+```{python}
+# pegar as paradas dessa linha
+paradas = s.get(
+    f"http://api.olhovivo.sptrans.com.br/v2.1/Parada/BuscarParadasPorLinha?codigoLinha={codigo_linha}"
+).json()
+
+print("Total de paradas:", len(paradas))
+```
+
+
+Construção do mapa
+```{python}
+# coordenadas iniciais para centralizar o mapa
+lat0 = paradas[0]["py"]
+lon0 = paradas[0]["px"]
+
+
+# criar mapa
+mapa = folium.Map(location=[lat0, lon0], zoom_start=13)
+```
+
+
+Colocar os pins de parada (cor azul)
+```{python}
+for p in paradas:
+    folium.Marker(
+        [p["py"], p["px"]],
+        popup=p["np"],
+        icon=folium.Icon(color="blue", icon="info-sign")
+    ).add_to(mapa)
+```
+
+
+Buscar a posição do ônibus em tempo real
+```{python}
+# posição em tempo real dos ônibus da linha
+posicoes = s.get(
+    f"http://api.olhovivo.sptrans.com.br/v2.1/Posicao/Linha?codigoLinha={codigo_linha}"
+).json()
+
+onibus = posicoes["vs"]
+print("Veículos encontrados:", len(onibus))
+```
+
+
+Colocar os pins dos ônibus (vermelho)
+```{python}
+for v in onibus:
+    folium.Marker(
+        [v["py"], v["px"]],
+        popup=f"Veículo {v['p']}",
+        icon=folium.Icon(color="red", icon="bus")
+    ).add_to(mapa)
+```
+
+
+E por fim, mostrar o mapa
+```{python}
+mapa
+```

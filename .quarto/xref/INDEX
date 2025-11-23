@@ -1,0 +1,23 @@
+{
+  "posts/post-with-code/index.qmd": {
+    "index.html": "7003e6b7"
+  },
+  "about.qmd": {
+    "about.html": "50eacc30"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "b0c45269"
+  },
+  "index.qmd": {
+    "index.html": "ec132374"
+  },
+  "posts/cotação_dolar/index.qmd": {
+    "index.html": "52aa087c"
+  },
+  "posts/frota_de_onibus/index.qmd": {
+    "index.html": "ef0480f2"
+  },
+  "posts/regressao_linear/index.qmd": {
+    "index.html": "f8c2ea6d"
+  }
+}

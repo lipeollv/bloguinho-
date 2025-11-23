@@ -1,0 +1,82 @@
+---
+title: "Cotação do dolar"
+author: "Filipe Cavalcanti"
+date: "2025-11-23"
+categories: [API, code, dolar]
+image: "dolar.jpg"
+jupyter: python3
+---
+
+Cotação do dolar - como desenvolver uma função em **Python** que te mostre as informações atuais de uma moeda (**dolar**).
+
+
+Bibliotecas necessárias para rodar a função.
+```{python}
+import requests
+import calendar
+from datetime import datetime, timedelta
+import plotly.express as px
+```
+
+
+Função para cotar um **único dia**. Se não encontrar a cotação do dia, ela chama ela mesma para tentar o dia anterior.
+```{python}
+def cotar(data):
+    url = fr"https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='{data}'&$format=json"
+    res = requests.get(url).json()
+
+    if res["value"]:
+        return res["value"][0]["cotacaoVenda"]
+    else:  # se nao tem cotação (fim de semana ou feriado), pega o dia anterior
+        dia_anterior = datetime.strptime(data, "%m%d%Y") - timedelta(days=1)
+        dia_anterior = datetime.strftime(dia_anterior, "%m%d%Y")
+        return cotar(dia_anterior)
+``` 
+
+
+Função para o **mês initeiro**. Ela recebe 'MMYYYY', gera todas as datas do mês e usa a função de cima para um único dia.
+```{python}
+def cotacao_dolar_mes(mmyyyy):
+
+    # interpretar MMYYYY
+    primeiro_dia = datetime.strptime(mmyyyy, "%m%Y")
+    ultimo_dia_num = calendar.monthrange(primeiro_dia.year, primeiro_dia.month)[1]
+    ultimo_dia = primeiro_dia.replace(day=ultimo_dia_num)
+
+    # criar lista com todos os dias do mês
+    datas = []
+    dia = primeiro_dia
+    while dia <= ultimo_dia:
+        datas.append(dia)
+        dia += timedelta(days=1)
+
+    # converter para o formato da API 
+    datas_api = [d.strftime("%m%d%Y") for d in datas]
+
+    # cotar cada dia (usa recursão para pegar dia anterior)
+    cotacoes = [cotar(data_str) for data_str in datas_api]
+
+    # gerar gráfico
+    fig = px.line(
+        x=datas,
+        y=cotacoes,
+        title=f"Cotação do Dólar - {mmyyyy[:2]}/{mmyyyy[2:]}",
+        labels={"x": "Data", "y": "Cotação de Venda (R$)"}
+    )
+
+    return fig
+```
+
+
+
+Exemplo> Março de 2024
+Esse comando gera um gráfico de linha mostrando a variação da cotação do dólar durante todo o mês.
+
+```{python}
+# Exemplo: março de 2024
+fig = cotacao_dolar_mes("032024")
+fig.show()
+
+```
+
+
